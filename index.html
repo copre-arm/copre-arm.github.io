@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CoPRE learns contact-free robot responses from proprioception to detect weak contact without additional force sensors or force labels.">
+  <meta name="theme-color" content="#245cce">
+  <title>CoPRE · Proprioceptive Weak-Contact Detection</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="wordmark" href="#home" aria-label="CoPRE home">CoPRE<span aria-hidden="true">.</span></a>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#resources">Resources</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero container" id="home" aria-labelledby="project-title">
+      <p class="eyebrow">Learning to sense contact</p>
+      <h1 id="project-title"><span class="project-name">CoPRE</span>Proprioceptive Weak-Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
+      <p class="hero-description">Detecting subtle physical interactions through the signals<br class="desktop-break"> a robot already has.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#method">Explore the method <span aria-hidden="true">↗</span></a>
+        <a class="button secondary" href="#resources">Project resources <span aria-hidden="true">↓</span></a>
+      </div>
+      <ul class="feature-tags" aria-label="Key properties">
+        <li>Built-in proprioception</li>
+        <li>Contact-free training</li>
+        <li>No force labels</li>
+      </ul>
+      <figure class="teaser">
+        <img src="assets/teaser.webp" width="1900" height="1295" fetchpriority="high" alt="CoPRE project illustration: ARX and G1 arms interacting with books, followed by ARX protective retreat and contact-guided insertion examples.">
+        <figcaption><span class="figure-label">Contact as feedback.</span> From weak-contact sensing to protective reactions and contact-guided manipulation.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section container overview" id="overview" aria-labelledby="overview-title">
+      <div class="section-heading">
+        <p class="eyebrow">01 / Overview</p>
+        <h2 id="overview-title">Small contacts.<br>Useful feedback.</h2>
+      </div>
+      <div class="prose">
+        <p>Low-cost robot arms already measure their own motion and actuator response. These signals offer a way to sense physical interaction without adding dedicated force sensors. But weak contact can be hidden by the torque variations of ordinary motion.</p>
+        <p><strong>Contact-free Proprioceptive Response Estimation (CoPRE)</strong> learns how a robot responds during contact-free motion. It predicts the current response from an earlier state history and known commands, then compares predicted and measured joint torque to obtain evidence of contact.</p>
+        <p>The key is when the predictor looks: measurements inside the interval being tested are reserved for detection, so they cannot alter the nominal prediction for that interval.</p>
+      </div>
+    </section>
+
+    <section class="method-section" id="method" aria-labelledby="method-title">
+      <div class="container section">
+        <div class="method-heading">
+          <div>
+            <p class="eyebrow">02 / Method</p>
+            <h2 id="method-title">Predict the motion.<br>Listen to the difference.</h2>
+          </div>
+          <p class="section-intro">Separate the information used for prediction from the response used as contact evidence.</p>
+        </div>
+        <ol class="steps">
+          <li><span class="step-number" aria-hidden="true">01</span><h3>Learn free motion</h3><p>Train on contact-free state and command logs. Calibrate the detection threshold using separate contact-free recordings.</p></li>
+          <li><span class="step-number" aria-hidden="true">02</span><h3>Predict from an earlier state</h3><p>Use a pre-interval history and known commands to predict the response, withholding state measurements within the tested interval.</p></li>
+          <li><span class="step-number" aria-hidden="true">03</span><h3>Turn residuals into feedback</h3><p>Compare measured and predicted torque. Convert the residual into contact evidence that can inform the robot’s next action.</p></li>
+        </ol>
+        <figure class="framework">
+          <a href="assets/framework.webp" aria-label="Open the full-resolution CoPRE method diagram">
+            <img src="assets/framework.webp" width="2200" height="803" loading="lazy" alt="CoPRE pipeline: contact-free collection and calibration, a Transformer predictor with recent states masked, torque residuals and contact confirmation, followed by protective reactions or contact-guided planning.">
+          </a>
+          <figcaption>From contact-free data to contact-aware action. <a href="assets/framework.webp">View full-size diagram <span aria-hidden="true">↗</span></a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section container resources" id="resources" aria-labelledby="resources-title">
+      <div class="section-heading">
+        <p class="eyebrow">03 / Resources</p>
+        <h2 id="resources-title">Explore the project.</h2>
+        <p>Materials will be linked here as they become available.</p>
+      </div>
+      <dl class="resource-list">
+        <div><dt>Paper</dt><dd><span class="status">Coming soon</span></dd></div>
+        <div><dt>Research code</dt><dd><span class="status">Coming soon</span></dd></div>
+        <div><dt>Video</dt><dd><span class="status">Coming soon</span></dd></div>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <a class="wordmark" href="#home">CoPRE<span aria-hidden="true">.</span></a>
+    <p>Contact-free Proprioceptive Response Estimation</p>
+    <a href="https://github.com/copre-arm/copre-arm.github.io">Website source <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>
