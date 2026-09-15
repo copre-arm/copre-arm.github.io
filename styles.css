@@ -100,3 +100,26 @@ dd { margin: 0; }
   html { scroll-behavior: auto; }
   .button { transition: none; }
 }
+
+.result-grid, .task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 40px 0 28px; }
+.result-card { border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+.platform-label { color: var(--accent); font-size: .875rem; font-weight: 600; }
+.result-card h3 { color: var(--muted); font-size: .95rem; font-weight: 400; margin: 20px 0; }
+.metric { display: block; color: var(--ink); font-size: clamp(3rem, 5vw, 4.4rem); font-weight: 650; letter-spacing: -.05em; line-height: 1.1; }
+.metric > span { font-size: .5em; }
+.result-card > p:last-of-type, .task-grid p { color: var(--muted); }
+.metric-details { margin: 24px 0 0; }
+.metric-details > div { display: flex; gap: 24px; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--line); font-size: .875rem; }
+.metric-details dt { font-weight: 400; color: var(--muted); }
+.metric-details dd { white-space: nowrap; font-weight: 600; }
+.evaluation-note { color: var(--muted); font-size: .875rem; max-width: 940px; }
+.evaluation-note p + p { margin-top: 12px; }
+.result-figure { margin-top: 36px; }
+.result-takeaway { margin-top: 24px; color: var(--muted); }
+.task-grid { gap: 48px; margin-bottom: 36px; }
+@media (max-width: 760px) {
+  .result-grid, .task-grid { grid-template-columns: 1fr; gap: 20px; }
+  .result-card { padding: 22px; }
+  .nav { flex-wrap: wrap; padding-block: 16px; }
+  .nav-links { gap: .5rem 1rem; }
+}

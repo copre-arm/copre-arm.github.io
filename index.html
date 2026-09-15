@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CoPRE learns contact-free robot responses from proprioception to detect weak contact without additional force sensors or force labels.">
   <meta name="theme-color" content="#245cce">
-  <title>CoPRE · Proprioceptive Weak-Contact Detection</title>
+  <title>CoPRE · Improving Sensitivity in Proprioceptive Contact Detection</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,6 +17,8 @@
       <div class="nav-links">
         <a href="#overview">Overview</a>
         <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#manipulation">Manipulation</a>
         <a href="#resources">Resources</a>
       </div>
     </nav>
@@ -25,16 +27,17 @@
   <main id="main">
     <section class="hero container" id="home" aria-labelledby="project-title">
       <p class="eyebrow">Learning to sense contact</p>
-      <h1 id="project-title"><span class="project-name">CoPRE</span>Proprioceptive Weak-Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
+      <h1 id="project-title"><span class="project-name">CoPRE</span>Improving Sensitivity in Proprioceptive Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
       <p class="hero-description">Detecting subtle physical interactions through the signals<br class="desktop-break"> a robot already has.</p>
       <div class="hero-actions">
         <a class="button primary" href="#method">Explore the method <span aria-hidden="true">↗</span></a>
-        <a class="button secondary" href="#resources">Project resources <span aria-hidden="true">↓</span></a>
+        <a class="button secondary" href="#results">See the results <span aria-hidden="true">↓</span></a>
       </div>
       <ul class="feature-tags" aria-label="Key properties">
         <li>Built-in proprioception</li>
         <li>Contact-free training</li>
         <li>No force labels</li>
+        <li>Validated on ARX L5 and G1</li>
       </ul>
       <figure class="teaser">
         <img src="assets/teaser.webp" width="1900" height="1295" fetchpriority="high" alt="CoPRE project illustration: ARX and G1 arms interacting with books, followed by ARX protective retreat and contact-guided insertion examples.">
@@ -48,9 +51,9 @@
         <h2 id="overview-title">Small contacts.<br>Useful feedback.</h2>
       </div>
       <div class="prose">
-        <p>Low-cost robot arms already measure their own motion and actuator response. These signals offer a way to sense physical interaction without adding dedicated force sensors. But weak contact can be hidden by the torque variations of ordinary motion.</p>
-        <p><strong>Contact-free Proprioceptive Response Estimation (CoPRE)</strong> learns how a robot responds during contact-free motion. It predicts the current response from an earlier state history and known commands, then compares predicted and measured joint torque to obtain evidence of contact.</p>
-        <p>The key is when the predictor looks: measurements inside the interval being tested are reserved for detection, so they cannot alter the nominal prediction for that interval.</p>
+        <p>Robots use contact feedback to stop when blocked and adjust their next motion. On low-cost arms, contact-induced joint torque changes can be small relative to normal motion variations and noise. We call these interactions <strong>weak contact</strong>.</p>
+        <p><strong>Contact-free Proprioceptive Response Estimation (CoPRE)</strong> learns the joint torque expected during contact-free motion from built-in joint states and motor signals. Training and calibration use only contact-free recordings, without additional force sensors or force labels.</p>
+        <p>Two designs preserve sensitivity: the predictor withholds state observations within the prediction interval, and noise-weighted Jacobian aggregation combines the torque residuals into a contact score. Experiments evaluate both designs on the ARX L5 and the G1 right arm.</p>
       </div>
     </section>
 
@@ -59,27 +62,77 @@
         <div class="method-heading">
           <div>
             <p class="eyebrow">02 / Method</p>
-            <h2 id="method-title">Predict the motion.<br>Listen to the difference.</h2>
+            <h2 id="method-title">Predict nominal torque.<br>Detect contact-induced changes.</h2>
           </div>
-          <p class="section-intro">Separate the information used for prediction from the response used as contact evidence.</p>
+          <p class="section-intro">Keep contact-induced changes in the residual and account for each joint’s variability during contact-free motion.</p>
         </div>
         <ol class="steps">
           <li><span class="step-number" aria-hidden="true">01</span><h3>Learn free motion</h3><p>Train on contact-free state and command logs. Calibrate the detection threshold using separate contact-free recordings.</p></li>
-          <li><span class="step-number" aria-hidden="true">02</span><h3>Predict from an earlier state</h3><p>Use a pre-interval history and known commands to predict the response, withholding state measurements within the tested interval.</p></li>
-          <li><span class="step-number" aria-hidden="true">03</span><h3>Turn residuals into feedback</h3><p>Compare measured and predicted torque. Convert the residual into contact evidence that can inform the robot’s next action.</p></li>
+          <li><span class="step-number" aria-hidden="true">02</span><h3>Predict from an earlier state</h3><p>Use earlier state–command history and known commands to predict nominal torque. Withhold state observations inside the prediction interval so recent contact cannot alter that reference.</p></li>
+          <li><span class="step-number" aria-hidden="true">03</span><h3>Weight and combine residuals</h3><p>Remove nominal bias and combine torque residuals through a noise-weighted Jacobian. Three consecutive samples above the calibrated threshold confirm contact.</p></li>
         </ol>
         <figure class="framework">
           <a href="assets/framework.webp" aria-label="Open the full-resolution CoPRE method diagram">
             <img src="assets/framework.webp" width="2200" height="803" loading="lazy" alt="CoPRE pipeline: contact-free collection and calibration, a Transformer predictor with recent states masked, torque residuals and contact confirmation, followed by protective reactions or contact-guided planning.">
           </a>
-          <figcaption>From contact-free data to contact-aware action. <a href="assets/framework.webp">View full-size diagram <span aria-hidden="true">↗</span></a></figcaption>
+          <figcaption>The score indicates contact; it is not a validated force measurement. <a href="assets/framework.webp">View full-size diagram <span aria-hidden="true">↗</span></a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section container" id="results" aria-labelledby="results-title">
+      <div class="method-heading">
+        <div>
+          <p class="eyebrow">03 / Experiments</p>
+          <h2 id="results-title">Evaluated on two<br>robot platforms.</h2>
+        </div>
+        <p class="section-intro">Each arm pushes five book stacks at three speeds, with three repetitions per condition: 45 physical trials per robot.</p>
+      </div>
+      <div class="result-grid">
+        <article class="result-card">
+          <p class="platform-label">ARX L5 · Six-joint arm</p>
+          <h3><span class="metric">74.1<span>%</span></span> overall trial recall</h3>
+          <p>Both the adapted neural and nominal dynamics baselines detect 0% of trials under combined calibration.</p>
+          <dl class="metric-details"><div><dt>Reference resistance at 90% detection</dt><dd>3.5 N</dd></div><div><dt>Held-out broad-motion alarm time</dt><dd>3.32%</dd></div></dl>
+        </article>
+        <article class="result-card">
+          <p class="platform-label">Unitree G1 · Seven-joint right arm</p>
+          <h3><span class="metric">82.2<span>%</span></span> overall trial recall</h3>
+          <p>The adapted neural baseline reaches 16.3% recall and the nominal dynamics baseline reaches 42.2%.</p>
+          <dl class="metric-details"><div><dt>Reference resistance at 90% detection</dt><dd>5.5 N</dd></div><div><dt>Held-out broad-motion alarm time</dt><dd>0.86%</dd></div></dl>
+        </article>
+      </div>
+      <div class="evaluation-note">
+        <p>Comparisons use shared calibration rules within each robot. Combined calibration includes task-matched and broader contact-free motion: ARX permits zero confirmed calibration alarms; G1 uses a 1% alarm-time budget in each calibration motion set. The two platforms use separate training and calibration.</p>
+        <p>Recall is averaged over three model seeds. Detection is evaluated from a geometric contact reference through push end on ARX, and within 0.5 s on G1. Reference resistances are measured separately at sliding onset. The reported 90% criterion must also hold at all higher tested levels; these values are not forces measured at the instant of detection.</p>
+      </div>
+      <figure class="framework result-figure">
+        <a href="assets/arx-results.webp" aria-label="Open full-resolution ARX detection results"><img src="assets/arx-results.webp" width="2200" height="909" loading="lazy" alt="ARX book-pushing results across reference resistances of 1.5 to 5.5 newtons. CoPRE retains detections under combined calibration; both baselines lose detections."></a>
+        <figcaption><span>ARX scores at 0.04 m/s, normalized by the detection threshold. Blue uses combined calibration; orange uses task-matched calibration. Percentages pool all three speeds.</span><a href="assets/arx-results.webp">View full-size results ↗</a></figcaption>
+      </figure>
+      <p class="result-takeaway">Matched ablations support state exclusion and noise-weighted aggregation on both robots. The transformer is a shared benchmark configuration; a GRU achieves better G1 results in the predictor-family ablation.</p>
+    </section>
+
+    <section class="method-section" id="manipulation" aria-labelledby="manipulation-title">
+      <div class="container section">
+        <div class="method-heading">
+          <div><p class="eyebrow">04 / Manipulation</p><h2 id="manipulation-title">Use contact to guide<br>the next attempt.</h2></div>
+          <p class="section-intro">Qualitative ARX demonstrations connect contact detection to protective retreat and belief-guided retries.</p>
+        </div>
+        <div class="task-grid">
+          <article><h3>Protective retreat during placement</h3><p>When a cup blocks placement of a carried block, detected contact triggers a stop and retreat. The robot places the block at an alternate location, leaving the cup upright.</p></article>
+          <article><h3>Contact-guided book insertion</h3><p>Contact with a neighboring book blocks the first attempt. Feedback updates a spatial belief map and guides an adjusted insertion pose; the next attempt succeeds.</p></article>
+        </div>
+        <figure class="framework">
+          <a href="assets/manipulation.webp" aria-label="Open full-resolution manipulation demonstrations"><img src="assets/manipulation.webp" width="2200" height="922" loading="lazy" alt="Two ARX demonstrations: protective retreat and alternate placement beside a cup, and pose adjustment followed by a successful book insertion retry."></a>
+          <figcaption><span>Placement and insertion sequences on ARX. These are qualitative demonstrations; task-success rates have not been quantified.</span><a href="assets/manipulation.webp">View full-size sequences ↗</a></figcaption>
         </figure>
       </div>
     </section>
 
     <section class="section container resources" id="resources" aria-labelledby="resources-title">
       <div class="section-heading">
-        <p class="eyebrow">03 / Resources</p>
+        <p class="eyebrow">05 / Resources</p>
         <h2 id="resources-title">Explore the project.</h2>
         <p>Materials will be linked here as they become available.</p>
       </div>

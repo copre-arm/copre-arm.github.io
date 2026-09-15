@@ -1,6 +1,6 @@
 # CoPRE project website
 
-Independent static website for **CoPRE: Proprioceptive Weak-Contact Detection for Low-Cost Robot Arms**.
+Independent static website for **CoPRE: Improving Sensitivity in Proprioceptive Contact Detection for Low-Cost Robot Arms**.
 
 ## Local preview
 
@@ -18,9 +18,9 @@ Open <http://localhost:8000>. No package installation or build step is required.
 - `styles.css`: colors, typography, spacing, and responsive layout.
 - `assets/`: self-contained copies of the project figures and favicon.
 
-The figures were exported from `tex/images/teaser.pdf` and `tex/images/framework.pdf` in the research workspace. This website does not load files from the parent repository. Update its copies explicitly when figures change.
+The figures were exported from the corresponding PDFs in `../icra27-overleaf/images/`. This website does not load files from the parent repository. Update its copies explicitly when figures change.
 
-Paper, research code, and video are marked “Coming soon.” Replace their status text with real links when released. Add the confirmed author list when appropriate. Numerical experiment claims are intentionally omitted from this initial page because the source manuscript includes draft-result notes.
+Paper, research code, and video are marked “Coming soon.” Replace their status text with real links when released. Add the confirmed author list when appropriate. The results section reports the manuscript’s combined-calibration benchmark on ARX L5 and G1, including within-platform calibration rules and reference-force interpretation. Manipulation sequences are qualitative.
 
 ## GitHub Pages
 
