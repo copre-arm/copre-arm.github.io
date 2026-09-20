@@ -1,0 +1,225 @@
+WEBVTT
+
+1
+00:00:00.428 --> 00:00:02.246
+When contact goes unnoticed,
+
+2
+00:00:02.534 --> 00:00:04.627
+a routine placement can tip a cup.
+
+3
+00:00:04.942 --> 00:00:06.535
+In these example trials,
+
+4
+00:00:06.639 --> 00:00:10.575
+CoPRE retreats, while the neural baseline keeps moving.
+
+5
+00:00:12.383 --> 00:00:15.883
+CoPRE detects weak contact using proprioception:
+
+6
+00:00:16.070 --> 00:00:18.792
+the robot's built in joint and motor signals.
+
+7
+00:00:20.377 --> 00:00:22.997
+Weak contact produces small torque changes.
+
+8
+00:00:23.324 --> 00:00:24.970
+These can be hidden by friction,
+
+9
+00:00:25.153 --> 00:00:28.405
+motion, and noise in the robot's built in signals.
+
+10
+00:00:30.387 --> 00:00:32.900
+We train a separate predictor for each robot
+
+11
+00:00:32.900 --> 00:00:34.744
+using contact free motion,
+
+12
+00:00:35.031 --> 00:00:38.599
+then calibrate the detection threshold on separate recordings.
+
+13
+00:00:40.380 --> 00:00:43.619
+Nominal torque is the torque expected without contact.
+
+14
+00:00:43.933 --> 00:00:47.303
+We predict it from earlier states and known commands,
+
+15
+00:00:47.578 --> 00:00:50.948
+excluding recent observations that may reflect contact.
+
+16
+00:00:52.275 --> 00:00:54.316
+A noise weighted Jacobian combines
+
+17
+00:00:54.316 --> 00:00:56.451
+observed minus predicted torque,
+
+18
+00:00:56.625 --> 00:00:58.684
+giving noisier joints less weight.
+
+19
+00:00:59.036 --> 00:01:00.808
+Three consecutive contact scores
+
+20
+00:01:00.808 --> 00:01:03.416
+at or above threshold confirm contact.
+
+21
+00:01:04.378 --> 00:01:06.827
+We measure reference sliding resistance:
+
+22
+00:01:07.010 --> 00:01:09.827
+the force needed to start each book stack sliding.
+
+23
+00:01:12.381 --> 00:01:15.355
+Each arm is tested at five reference resistances
+
+24
+00:01:15.355 --> 00:01:17.041
+and three pushing speeds,
+
+25
+00:01:17.249 --> 00:01:19.133
+with three repetitions per condition.
+
+26
+00:01:20.383 --> 00:01:21.926
+On the G1 humanoid,
+
+27
+00:01:22.054 --> 00:01:24.934
+detection uses only the right arm's signals,
+
+28
+00:01:25.049 --> 00:01:27.372
+with its own predictor and calibration.
+
+29
+00:01:28.435 --> 00:01:31.621
+Recall is the percentage of contact trials detected.
+
+30
+00:01:31.935 --> 00:01:35.832
+CoPRE reaches seventy four point one percent on ARX
+
+31
+00:01:35.962 --> 00:01:38.489
+and eighty two point two percent on G1,
+
+32
+00:01:38.790 --> 00:01:40.369
+exceeding both baselines
+
+33
+00:01:40.369 --> 00:01:42.976
+under each robot's evaluation protocol.
+
+34
+00:01:44.337 --> 00:01:46.849
+At three point five newtons for ARX
+
+35
+00:01:46.849 --> 00:01:48.743
+and five point five for G1,
+
+36
+00:01:48.920 --> 00:01:50.683
+detection reaches ninety percent
+
+37
+00:01:50.920 --> 00:01:53.397
+and stays above it at higher tested resistances.
+
+38
+00:01:54.388 --> 00:01:56.692
+Contact feedback also guides action.
+
+39
+00:01:57.033 --> 00:01:59.416
+Here, a cup blocks the planned placement.
+
+40
+00:02:00.333 --> 00:02:03.097
+The robot retreats and chooses a new placement.
+
+41
+00:02:05.382 --> 00:02:07.936
+It places the block at an alternate location,
+
+42
+00:02:08.224 --> 00:02:09.410
+leaving the cup upright.
+
+43
+00:02:13.379 --> 00:02:16.972
+Next, the robot inserts a book beside neighboring books.
+
+44
+00:02:19.379 --> 00:02:21.090
+Contact with a neighboring book
+
+45
+00:02:21.090 --> 00:02:23.578
+prompts the robot to adjust its pose.
+
+46
+00:02:25.388 --> 00:02:28.166
+The robot adjusts its approach and retries,
+
+47
+00:02:28.349 --> 00:02:31.403
+guided by contact feedback and task progress.
+
+48
+00:02:33.388 --> 00:02:35.403
+The book enters the available gap
+
+49
+00:02:35.506 --> 00:02:36.916
+and is seated in the shelf.
+
+50
+00:02:37.230 --> 00:02:39.335
+Contact feedback helps the robot
+
+51
+00:02:39.335 --> 00:02:41.442
+adapt its motion during insertion.
+
+52
+00:02:45.391 --> 00:02:47.945
+The gripper releases the book and withdraws.
+
+53
+00:02:50.385 --> 00:02:52.902
+CoPRE improves weak contact sensitivity
+
+54
+00:02:52.965 --> 00:02:54.553
+on two robot platforms.
+
+55
+00:02:54.811 --> 00:02:57.443
+Its contact feedback supports protective retreat
+
+56
+00:02:57.564 --> 00:02:59.140
+and book insertion retries.
