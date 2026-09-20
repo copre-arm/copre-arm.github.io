@@ -1,0 +1,20 @@
+factor,variant,arx_recall_pct,arx_broad_alarm_time_pct,g1_recall_pct,g1_broad_alarm_time_pct
+State exclusion,Off,3.7,0.42,64.4,0.84
+State exclusion,On (default),74.1,3.32,82.2,0.86
+Residual aggregation,Standardized norm,0,11.79,31.9,1.02
+Residual aggregation,Unweighted Jacobian,45.9,1.67,12.6,0.38
+Residual aggregation,Weighted Jacobian (default),74.1,3.32,82.2,0.86
+Prediction horizon,H = 1,4.4,0.22,70.4,0.88
+Prediction horizon,H = 2,46.7,1.26,71.1,0.94
+Prediction horizon,H = 3 (default),74.1,3.32,82.2,0.86
+Prediction horizon,H = 4,74.1,4.55,83.7,1.23
+Prediction horizon,H = 5,80,7.92,81.5,0.95
+Predictor family,Persistence,0,0.02,24.4,0.59
+Predictor family,Ridge,31.1,0.23,48.9,0.91
+Predictor family,MLP,77.8,14.18,81.5,0.84
+Predictor family,GRU,57,0.72,92.6,0.45
+Predictor family,Transformer (default),74.1,3.32,82.2,0.86
+Prediction and temporal filtering,Direct / instantaneous (default),74.1,3.32,82.2,0.86
+Prediction and temporal filtering,Autoregressive,69.6,6.3,65.9,0.81
+Prediction and temporal filtering,Fast transient,40,1,54.8,0.99
+Prediction and temporal filtering,Slow sustained,80,26.19,50.4,0.56

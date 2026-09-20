@@ -1,0 +1,7 @@
+comparison,setting,off_recall_pct,off_broad_alarm_time_pct,on_recall_pct,on_broad_alarm_time_pct
+State exclusion across horizons,2,68.9,0.85,71.1,0.94
+State exclusion across horizons,3,64.4,0.84,82.2,0.86
+State exclusion across horizons,4,63,0.81,83.7,1.23
+Detection evaluation window,0.1,13.3,,20.7,
+Detection evaluation window,0.25,38.5,,57,
+Detection evaluation window,0.5,64.4,,82.2,
