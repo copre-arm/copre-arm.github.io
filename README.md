@@ -33,3 +33,12 @@ Manipulation remains qualitative; candidate placement/insertion logs are not use
 The site is compatible with GitHub Pages, served from `main` at the repository root (`.nojekyll`). Publishing requires committing/pushing the reviewed files and checking the Pages deployment. Local preview is not evidence of deployment.
 
 The current 21.8 MB video does not need an HLS dependency. If later traffic or slow-network measurements justify adaptive streaming, host video renditions on a suitable CDN and keep captions, poster, native fallback, and user-initiated playback.
+
+## Supplemental experiment gallery
+
+Fifteen selected original-speed, silent clips are served by one player under Manipulation. The selection covers ARX/G1 pushing at 2, 4, 6, 8, and 10 books each, contact-free collection, complete book insertion, and two placement examples (CoPRE and neural-baseline cup-tip). These are illustrative clips, not additional benchmark trials or success-rate evidence. The two free-motion clips are explicitly labeled continuous excerpts.
+
+All clips use 1280×720 H.264, CRF 24, slow preset, yuv420p, and faststart. Encoding uses the installed CompressO application's `compresso_ffmpeg` CLI engine; it does not automate the GUI or claim a standalone CompressO batch CLI. HLG/Dolby Vision insertion footage is tone-mapped to SDR with Hable, a fixed linear exposure factor of 0.5 with a mild blue-channel white-balance adjustment, and BT.709 output tags; this reduces the previous overly bright, warm appearance. G1 clips are cropped to focus on the robot motion. Audio and source metadata are removed. Video selection does not autoplay; `preload="none"` is retained and playing either video pauses the other.
+
+
+The website serves the finished MP4 and WebP files directly; no build scripts are required. Original recordings remain unchanged in the source media folder.
