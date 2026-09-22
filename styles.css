@@ -29,10 +29,10 @@ img { display: block; width: 100%; height: auto; }
 .wordmark { font-size: 1.45rem; font-weight: 800; letter-spacing: -.06em; }
 .wordmark span { color: var(--accent); }
 .nav-links { display: flex; flex-wrap: wrap; gap: 2rem; font-size: .875rem; font-weight: 500; color: var(--muted); }
-.hero { padding-top: 76px; text-align: center; }
+.hero { padding-top: 60px; text-align: center; }
 .eyebrow { color: var(--accent); font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; margin-bottom: 1.3rem; }
 h1 { font-size: clamp(1.65rem, 3.2vw, 2.65rem); line-height: 1.24; font-weight: 600; letter-spacing: -.035em; text-wrap: balance; }
-.project-name { display: block; color: var(--accent); font-size: clamp(4rem, 9vw, 6.6rem); line-height: 1; letter-spacing: -.075em; font-weight: 800; margin: 0 0 1.6rem; }
+.project-name { color: var(--ink); font-weight: 700; }
 .hero-description { color: var(--muted); font-size: 1.125rem; line-height: 1.7; margin: 1.5rem auto 0; max-width: 640px; }
 .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: .8rem; margin: 1.8rem 0; }
 .button { display: inline-flex; justify-content: center; align-items: center; gap: 1.2rem; min-height: 48px; padding: .7rem 1.25rem; font-size: .875rem; font-weight: 600; border-radius: 7px; transition: background .15s, border-color .15s; }
@@ -46,15 +46,16 @@ h1 { font-size: clamp(1.65rem, 3.2vw, 2.65rem); line-height: 1.24; font-weight: 
 .teaser img { max-width: 890px; margin-inline: auto; }
 figcaption { font-size: .875rem; color: var(--muted); padding: 1.3rem 0; line-height: 1.6; }
 .figure-label { color: var(--ink); font-weight: 600; }
-.section { padding-block: 90px; }
-h2 { font-size: clamp(1.9rem, 3.5vw, 2.6rem); line-height: 1.2; font-weight: 600; letter-spacing: -.04em; text-wrap: balance; }
-.overview { display: grid; grid-template-columns: 1fr 1.65fr; gap: 70px; }
+.section { padding-block: 64px; }
+h2 { font-size: clamp(1.65rem, 2.5vw, 2rem); line-height: 1.2; font-weight: 600; letter-spacing: -.04em; text-wrap: balance; }
+.overview { display: block; }
+.overview .prose { margin-top: 24px; max-width: 960px; }
 .prose { color: var(--muted); }
 .prose p + p { margin-top: 1rem; }
 .prose strong { font-weight: 600; color: var(--ink); }
 .method-section { background: var(--tint); border-block: 1px solid var(--line); }
-.method-heading { display: flex; justify-content: space-between; align-items: end; gap: 4rem; }
-.section-intro { max-width: 340px; color: var(--muted); }
+.method-heading { display: block; }
+.section-intro { max-width: 960px; margin-top: 18px; color: var(--muted); }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; padding: 0; list-style: none; margin: 48px 0; }
 .steps li { border-top: 1px solid #c8d5e6; padding-top: 1.2rem; }
 .step-number { font-size: .875rem; font-weight: 600; color: var(--accent); }
@@ -184,9 +185,9 @@ th:first-child { text-align: left; }
 .protocol-details { margin-top: 18px; color: var(--muted); font-size: .85rem; }
 .protocol-details summary { cursor: pointer; color: var(--accent); padding-block: 8px; }
 .protocol-details .evaluation-note { margin-top: 10px; }
-.evaluation-details { margin-top: 28px; border: 1px solid var(--line); border-radius: 10px; padding: 4px 22px 18px; }
+.evaluation-details { margin-top: 24px; }
 .evaluation-details > summary { padding-block: 16px; cursor: pointer; font-weight: 600; color: var(--accent); }
-.evaluation-details:not([open]) { padding-bottom: 4px; }
+
 .detail-note { font-size: .85rem; color: var(--muted); margin: 12px 0 22px; }
 .evaluation-details .data-links { margin-top: 12px; }
 @media (max-width: 760px) {
@@ -224,3 +225,10 @@ th:first-child { text-align: left; }
 .book-buttons a { display: block; text-align: center; padding: 9px 3px; border-color: var(--line); background: #fff; font-size: .72rem; }
 .book-buttons a[aria-current="true"] { background: #e8f0ff; border-color: var(--accent); }
 @media (min-width: 421px) and (max-width: 760px) { .book-options { grid-column: 1 / -1; } }
+
+/* Research results use comparable metrics and ordinary text hierarchy. */
+.main-results th:nth-child(2),
+.main-results td:nth-child(2) { text-align: left; }
+.main-results tbody tr:nth-child(3) > * { border-bottom: 2px solid #b8c8d8; }
+.ablation-summary { margin-top: 18px; max-width: 960px; color: var(--muted); }
+.nav-links { column-gap: 1.4rem; }

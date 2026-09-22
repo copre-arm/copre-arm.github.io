@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CoPRE learns contact-free robot responses from proprioception to detect weak contact without additional force sensors or force labels.">
+  <meta name="description" content="CoPRE detects weak contact from proprioceptive feedback using nominal joint-torque prediction, state exclusion, and noise-weighted Jacobian aggregation.">
   <meta name="theme-color" content="#245cce">
   <title>CoPRE · Improving Sensitivity in Proprioceptive Contact Detection</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -19,7 +19,8 @@
         <a href="#overview">Overview</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
-        <a href="#manipulation">Demos</a>
+        <a href="#manipulation">Manipulation</a>
+        <a href="#evidence">Ablations</a>
         <a href="#resources">Resources</a>
       </div>
     </nav>
@@ -27,19 +28,11 @@
 
   <main id="main">
     <section class="hero container" id="home" aria-labelledby="project-title">
-      <p class="eyebrow">Learning to sense contact</p>
-      <h1 id="project-title"><span class="project-name">CoPRE</span>Improving Sensitivity in Proprioceptive Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
-      <p class="hero-description">Detecting subtle physical interactions through the signals<br class="desktop-break"> a robot already has.</p>
+      <h1 id="project-title"><span class="project-name">CoPRE:</span> Improving Sensitivity in Proprioceptive Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
       <div class="hero-actions">
-        <a class="button primary" href="#video">Watch the film · 3 min <span aria-hidden="true">▶</span></a>
-        <a class="button secondary" href="#results">See the results <span aria-hidden="true">↓</span></a>
+        <a class="button secondary" href="#video">Project Video · 3 min <span aria-hidden="true">▶</span></a>
+        <a class="button secondary" href="#results">Experimental Results <span aria-hidden="true">↓</span></a>
       </div>
-      <ul class="feature-tags" aria-label="Key properties">
-        <li>Built-in proprioception</li>
-        <li>Contact-free training</li>
-        <li>No force labels</li>
-        <li>Validated on ARX L5 and G1</li>
-      </ul>
       <div class="video-shell" id="video">
         <video id="project-video" controls playsinline preload="none" poster="assets/video/poster.webp" width="1920" height="1080" aria-label="CoPRE: three-minute research video">
           <source src="assets/video/copre-v36.mp4" type="video/mp4">
@@ -47,9 +40,9 @@
           <p><a href="assets/video/copre-v36.mp4">Download the project video</a>.</p>
         </video>
       </div>
-      <div class="video-caption"><span>From weak-contact sensing to contact-guided action.</span><a href="assets/video/copre-v36.mp4" download>Download · 21.8 MB ↗</a></div>
+      <div class="video-caption"><span>Proprioceptive contact detection and reactive manipulation.</span><a href="assets/video/copre-v36.mp4" download>Download · 21.8 MB ↗</a></div>
       <nav class="chapters" aria-label="Video chapters">
-        <button type="button" data-time="0">00:00 <span>In action</span></button>
+        <button type="button" data-time="0">00:00 <span>Reactive manipulation</span></button>
         <button type="button" data-time="30">00:30 <span>Method</span></button>
         <button type="button" data-time="64">01:04 <span>Experiments</span></button>
         <button type="button" data-time="88">01:28 <span>Results</span></button>
@@ -57,22 +50,16 @@
         <button type="button" data-time="133">02:13 <span>Insertion</span></button>
       </nav>
       <p id="video-status" role="status" class="video-status"></p>
-      <div class="coverage-strip" aria-label="Evaluation coverage">
-        <div><strong>2</strong><span>robot platforms</span></div>
-        <div><strong>90</strong><span>physical contact trials</span></div>
-        <div><strong>5 × 3 × 3</strong><span>resistances × speeds × repeats / arm</span></div>
-        <div><strong>3</strong><span>learned-model seeds</span></div>
-      </div>
     </section>
 
     <section class="section container overview" id="overview" aria-labelledby="overview-title">
       <div class="section-heading">
-        <p class="eyebrow">01 / Overview</p>
-        <h2 id="overview-title">Small contacts.<br>Useful feedback.</h2>
+
+        <h2 id="overview-title">Overview</h2>
       </div>
       <div class="prose">
-        <p>Weak contact can be hidden by friction, motion, and noise in a robot’s built-in signals. <strong>Contact-free Proprioceptive Response Estimation (CoPRE)</strong> learns the torque expected during free motion, making contact-induced deviations easier to detect.</p>
-        <p>Training and calibration use only contact-free recordings. On ARX L5 and the G1 right arm, CoPRE improves contact detection using proprioception; ARX demonstrations use that feedback for protective retreat and insertion retries.</p>
+        <p>Weak contact induces changes in joint torque estimates that can be difficult to distinguish from variability due to friction, robot motion, and measurement noise. <strong>Contact-free Proprioceptive Response Estimation (CoPRE)</strong> predicts nominal joint torque from proprioceptive histories and joint commands, and detects contact through deviations between observed and predicted torque estimates. Proprioceptive observations comprise joint positions, velocities, and motor-derived torque estimates.</p>
+        <p>CoPRE combines state exclusion within the prediction interval with noise-weighted Jacobian aggregation of torque residuals. Training and threshold calibration use only contact-free recordings, without additional force sensors or contact or force labels. We evaluate contact detection on ARX L5 and the Unitree G1 right arm, and demonstrate contact-guided protective retreat and insertion retries on ARX.</p>
       </div>
     </section>
 
@@ -80,21 +67,21 @@
       <div class="container section">
         <div class="method-heading">
           <div>
-            <p class="eyebrow">02 / Method</p>
-            <h2 id="method-title">Predict nominal torque.<br>Detect contact-induced changes.</h2>
+
+            <h2 id="method-title">Method</h2>
           </div>
-          <p class="section-intro">Two complementary designs: state exclusion and noise-weighted residual aggregation.</p>
+          <p class="section-intro">State exclusion limits contact-induced changes to the nominal reference; noise-weighted Jacobian aggregation accounts for contact-free residual variability.</p>
         </div>
         <ol class="steps">
-          <li><span class="step-number" aria-hidden="true">01</span><h3>Learn free motion</h3><p>Train on contact-free state and command logs. Calibrate the detection threshold using separate contact-free recordings.</p></li>
-          <li><span class="step-number" aria-hidden="true">02</span><h3>Predict from an earlier state</h3><p>Use earlier state–command history and known commands to predict nominal torque. Withhold state observations inside the prediction interval so recent contact cannot alter that reference.</p></li>
-          <li><span class="step-number" aria-hidden="true">03</span><h3>Weight and combine residuals</h3><p>Remove nominal bias and combine torque residuals through a noise-weighted Jacobian. Three consecutive samples at or above the calibrated threshold confirm contact.</p></li>
+          <li><span class="step-number" aria-hidden="true">01</span><h3>Contact-Free Training and Calibration</h3><p>Train the nominal-response predictor on contact-free proprioceptive observations and joint commands. Calibrate the detection threshold using separate contact-free recordings.</p></li>
+          <li><span class="step-number" aria-hidden="true">02</span><h3>Nominal Torque Prediction with State Exclusion</h3><p>Predict nominal joint torque from state–command history preceding the prediction interval and known commands within it. Exclude state observations within this interval to limit the influence of recent contact-induced state changes on the nominal reference.</p></li>
+          <li><span class="step-number" aria-hidden="true">03</span><h3>Noise-Weighted Jacobian Aggregation</h3><p>Correct the nominal bias in observed-minus-predicted torque residuals, then aggregate them using the end-effector Jacobian with lower weights for joints with greater contact-free residual variability. Confirm contact when the score meets or exceeds the calibrated threshold for three consecutive samples.</p></li>
         </ol>
         <figure class="framework">
           <a href="assets/framework.webp" aria-label="Open the full-resolution CoPRE method diagram">
-            <img src="assets/framework.webp" width="2200" height="803" loading="lazy" alt="CoPRE pipeline: contact-free collection and calibration, a Transformer predictor with recent states masked, torque residuals and contact confirmation, followed by protective reactions or contact-guided planning.">
+            <img src="assets/framework.webp" width="2200" height="803" loading="lazy" alt="CoPRE pipeline: contact-free collection and calibration, a Transformer predictor excluding state observations within the prediction interval, torque residuals and contact confirmation, followed by protective reactions or contact-guided planning.">
           </a>
-          <figcaption>From contact-free learning to contact detection and feedback-guided action. <a href="assets/framework.webp">View full-size diagram <span aria-hidden="true">↗</span></a></figcaption>
+          <figcaption>CoPRE pipeline: nominal-response prediction, torque-residual aggregation, and contact-guided manipulation. <a href="assets/framework.webp">View full-size diagram <span aria-hidden="true">↗</span></a></figcaption>
         </figure>
       </div>
     </section>
@@ -102,33 +89,28 @@
     <section class="section container" id="results" aria-labelledby="results-title">
       <div class="method-heading">
         <div>
-          <p class="eyebrow">03 / Experiments</p>
-          <h2 id="results-title">Evaluated on two<br>robot platforms.</h2>
+
+          <h2 id="results-title">Experimental Results</h2>
         </div>
-        <p class="section-intro">Each arm pushes five book stacks at three speeds, with three repetitions per condition: 45 physical trials per robot.</p>
+        <p class="section-intro">We evaluate CoPRE on ARX L5 and the Unitree G1 right arm using 90 physical contact trials. Each platform is tested at five reference sliding-resistance levels and three pushing speeds, with three repetitions per condition (45 trials per platform).</p>
       </div>
-      <div class="result-grid">
-        <article class="result-card">
-          <p class="platform-label">ARX L5 · Six-joint arm</p>
-          <h3><span class="metric">74.1<span>%</span></span> overall trial recall</h3>
-          <p class="confidence">95% CI · 62.2–85.2%</p>
-
-          <div class="comparison" aria-label="Overall trial recall by method"><div class="bar-row"><span>CoPRE</span><div class="bar-track"><i style="width:74.1%" class="ours"></i></div><b>74.1%</b></div><div class="bar-row"><span>Neural baseline</span><div class="bar-track"><i style="width:0%" class="baseline"></i></div><b>0%</b></div><div class="bar-row"><span>Dynamics baseline</span><div class="bar-track"><i style="width:0%" class="baseline"></i></div><b>0%</b></div></div><dl class="metric-details"><div><dt>Reference resistance at 90% detection</dt><dd>3.5 N</dd></div><div><dt>Held-out broad-motion alarm time</dt><dd>3.32%</dd></div></dl>
-        </article>
-        <article class="result-card">
-          <p class="platform-label">Unitree G1 · Seven-joint right arm</p>
-          <h3><span class="metric">82.2<span>%</span></span> overall trial recall</h3>
-          <p class="confidence">95% CI · 72.6–91.1%</p>
-
-          <div class="comparison" aria-label="Overall trial recall by method"><div class="bar-row"><span>CoPRE</span><div class="bar-track"><i style="width:82.2%" class="ours"></i></div><b>82.2%</b></div><div class="bar-row"><span>Neural baseline</span><div class="bar-track"><i style="width:16.3%" class="baseline"></i></div><b>16.3%</b></div><div class="bar-row"><span>Dynamics baseline</span><div class="bar-track"><i style="width:42.2%" class="baseline"></i></div><b>42.2%</b></div></div><dl class="metric-details"><div><dt>Reference resistance at 90% detection</dt><dd>5.5 N</dd></div><div><dt>Held-out broad-motion alarm time</dt><dd>0.86%</dd></div></dl>
-        </article>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Main contact-detection results">
+        <table class="main-results"><caption>Contact detection under combined calibration. Recall and false-alarm time are reported in percent.</caption><thead><tr><th scope="col">Platform</th><th scope="col">Method</th><th scope="col">Recall ↑</th><th scope="col">F<sub>90</sub> (N) ↓</th><th scope="col">FA time ↓</th></tr></thead><tbody>
+          <tr><th scope="row">ARX L5</th><td>CoPRE</td><td>74.1</td><td>3.5</td><td>3.32</td></tr>
+          <tr><th scope="row">ARX L5</th><td>NEXT-based neural predictor</td><td>0.0</td><td>&gt;5.5</td><td>14.51</td></tr>
+          <tr><th scope="row">ARX L5</th><td>Nominal inverse-dynamics detector</td><td>0.0</td><td>&gt;5.5</td><td>0.00</td></tr>
+          <tr><th scope="row">G1 right arm</th><td>CoPRE</td><td>82.2</td><td>5.5</td><td>0.86</td></tr>
+          <tr><th scope="row">G1 right arm</th><td>NEXT-based neural predictor</td><td>16.3</td><td>&gt;5.5</td><td>1.51</td></tr>
+          <tr><th scope="row">G1 right arm</th><td>Nominal inverse-dynamics detector</td><td>42.2</td><td>&gt;5.5</td><td>0.36</td></tr>
+        </tbody></table>
       </div>
+      <p class="evaluation-note">CoPRE recall: ARX 74.1% (95% CI: 62.2–85.2%); G1 82.2% (95% CI: 72.6–91.1%). FA time is the fraction of held-out broad contact-free motion spent in confirmed alarm. F<sub>90</sub> is the lowest tested reference sliding resistance with ≥90% recall at that and all higher tested levels; &gt;5.5 indicates that the criterion is unmet.</p>
       <p class="evaluation-note">Combined calibration; shared comparison rules within each robot. ARX evaluates detection through push end; G1 uses a 0.5 s window. Reference resistance is measured separately at sliding onset; the 90% criterion must hold at that and all higher tested levels.</p>
       <details class="protocol-details"><summary>Evaluation protocol and metric definitions</summary>
         <div class="evaluation-note">
           <p>ARX selects the lowest threshold with zero confirmed calibration alarms. G1 permits at most 1% alarm time in each calibration motion set and uses three-fold cross-fitting. Training and calibration are separate for each robot.</p>
           <p>Learned-model recall averages three seeds; dynamics is evaluated once. The 95% confidence intervals bootstrap physical trials, grouping seed evaluations. The evaluation window begins at a geometric contact reference, not independently measured contact onset.</p>
-          <p>Broad-motion alarm time is the fraction of held-out broad contact-free motion spent in confirmed alarm. Reference resistance characterizes the pushing condition, not force at detection. CoPRE’s score is used for contact detection, not validated force measurement.</p>
+          <p>The broad-motion false-alarm time fraction is the fraction of held-out broad contact-free motion spent in confirmed alarm. Reference resistance characterizes the pushing condition, not force at detection. CoPRE’s score is used for contact detection, not validated force measurement.</p>
         </div>
       </details>
       <figure class="framework result-figure">
@@ -142,7 +124,7 @@
       </figure>
       <details class="protocol-details"><summary>G1 detection rates by reference resistance</summary>
       <div class="table-wrap" tabindex="0" role="region" aria-label="G1 detection rates by resistance">
-        <table><caption>G1 detection by reference sliding resistance · 9 physical trials per level</caption><thead><tr><th scope="col">Method</th><th scope="col">1.5 N</th><th scope="col">2.5 N</th><th scope="col">3.5 N</th><th scope="col">4.5 N</th><th scope="col">5.5 N</th></tr></thead><tbody><tr><th scope="row">CoPRE</th><td>55.6%</td><td>85.2%</td><td>85.2%</td><td>85.2%</td><td>100.0%</td></tr><tr><th scope="row">Neural baseline</th><td>0.0%</td><td>18.5%</td><td>0.0%</td><td>25.9%</td><td>37.0%</td></tr><tr><th scope="row">Dynamics baseline</th><td>22.2%</td><td>22.2%</td><td>55.6%</td><td>44.4%</td><td>66.7%</td></tr></tbody></table></div>
+        <table><caption>G1 detection by reference sliding resistance · 9 physical trials per level</caption><thead><tr><th scope="col">Method</th><th scope="col">1.5 N</th><th scope="col">2.5 N</th><th scope="col">3.5 N</th><th scope="col">4.5 N</th><th scope="col">5.5 N</th></tr></thead><tbody><tr><th scope="row">CoPRE</th><td>55.6%</td><td>85.2%</td><td>85.2%</td><td>85.2%</td><td>100.0%</td></tr><tr><th scope="row">NEXT-based neural predictor</th><td>0.0%</td><td>18.5%</td><td>0.0%</td><td>25.9%</td><td>37.0%</td></tr><tr><th scope="row">Nominal inverse-dynamics detector</th><td>22.2%</td><td>22.2%</td><td>55.6%</td><td>44.4%</td><td>66.7%</td></tr></tbody></table></div>
       </details>
     </section>
 
@@ -150,12 +132,12 @@
     <section class="method-section" id="manipulation" aria-labelledby="manipulation-title">
       <div class="container section">
         <div class="method-heading">
-          <div><p class="eyebrow">04 / Manipulation</p><h2 id="manipulation-title">Use contact to guide<br>the next attempt.</h2></div>
+          <div><h2 id="manipulation-title">Reactive Manipulation</h2></div>
           <p class="section-intro">Qualitative ARX demonstrations connect contact detection to protective retreat and belief-guided retries.</p>
         </div>
         <div class="task-grid">
           <article><h3>Protective retreat during placement</h3><p>When a cup blocks placement of a carried block, detected contact triggers a stop and retreat. The robot places the block at an alternate location, leaving the cup upright.</p></article>
-          <article><h3>Contact-guided book insertion</h3><p>Contact with a neighboring book blocks the first attempt. Feedback updates a spatial belief map and guides pose adjustments and retries until the book enters the gap.</p></article>
+          <article><h3>Contact-guided book insertion</h3><p>Contact with a neighboring book blocks the first attempt. Contact feedback updates a spatial belief map and guides pose adjustments and retries until the book enters the gap.</p></article>
         </div>
         <figure class="framework">
           <a href="assets/manipulation.webp" aria-label="Open full-resolution manipulation demonstrations"><img src="assets/manipulation.webp" width="2200" height="922" loading="lazy" alt="Two ARX demonstrations: protective retreat and alternate placement beside a cup, and pose adjustment followed by a successful book insertion retry."></a>
@@ -163,22 +145,22 @@
         </figure>
 
         <div class="experiment-gallery" id="experiment-videos" aria-labelledby="gallery-title">
-          <div class="gallery-heading"><h3 id="gallery-title">Watch the experiments</h3><p>Extended recordings at original speed · silent</p></div>
+          <div class="gallery-heading"><h3 id="gallery-title">Supplementary Experiment Videos</h3><p>Extended recordings at original speed · silent</p></div>
           <div class="gallery-layout">
             <div class="gallery-screen">
               <video id="experiment-player" controls playsinline preload="none" width="1280" height="720" poster="assets/video/experiments/placement-copre.webp" aria-labelledby="experiment-title">
                 <source src="assets/video/experiments/placement-copre.mp4" type="video/mp4">
                 <a href="assets/video/experiments/placement-copre.mp4">Open the placement video</a>
               </video>
-              <h4 id="experiment-title">CoPRE · retreat and re-place</h4>
+              <h4 id="experiment-title">CoPRE · protective retreat and alternative placement</h4>
               <p id="experiment-description">The continuous placement sequence shows approach, retreat, and placement at an alternate location.</p>
               <p class="gallery-meta"><span id="experiment-duration">0:41 · 720p · 1×</span><a id="experiment-download" href="assets/video/experiments/placement-copre.mp4" download>Download clip ↓</a></p>
               <p id="experiment-status" role="status"></p>
             </div>
             <nav class="clip-list" aria-label="Choose an experiment video">
               <div class="clip-group"><p>Placement</p>
-                <a href="assets/video/experiments/placement-copre.mp4" data-clip="placement-copre" data-poster="assets/video/experiments/placement-copre.webp" data-title="CoPRE · retreat and re-place" data-description="The continuous placement sequence shows approach, retreat, and placement at an alternate location." data-duration="0:41" aria-label="CoPRE · retreat and re-place, 0:41" aria-current="true"><span>CoPRE · retreat and re-place</span><span class="clip-time">0:41</span></a>
-                <a href="assets/video/experiments/placement-baseline-tip.mp4" data-clip="placement-baseline-tip" data-poster="assets/video/experiments/placement-baseline-tip.webp" data-title="Neural baseline · cup tips" data-description="One neural-baseline placement example in which continued motion tips the cup." data-duration="0:28" aria-label="Neural baseline · cup tips, 0:28"><span>Neural baseline · cup tips</span><span class="clip-time">0:28</span></a>
+                <a href="assets/video/experiments/placement-copre.mp4" data-clip="placement-copre" data-poster="assets/video/experiments/placement-copre.webp" data-title="CoPRE · protective retreat and alternative placement" data-description="The continuous placement sequence shows approach, retreat, and placement at an alternate location." data-duration="0:41" aria-label="CoPRE · protective retreat and alternative placement, 0:41" aria-current="true"><span>CoPRE · protective retreat and alternative placement</span><span class="clip-time">0:41</span></a>
+                <a href="assets/video/experiments/placement-baseline-tip.mp4" data-clip="placement-baseline-tip" data-poster="assets/video/experiments/placement-baseline-tip.webp" data-title="NEXT-based neural predictor · cup tips" data-description="One NEXT-based neural-predictor placement example in which continued motion tips the cup." data-duration="0:28" aria-label="NEXT-based neural predictor · cup tips, 0:28"><span>NEXT-based neural predictor · cup tips</span><span class="clip-time">0:28</span></a>
               </div>
               <div class="clip-group"><p>Insertion</p>
                 <a href="assets/video/experiments/insertion.mp4?v=2" data-clip="insertion" data-poster="assets/video/experiments/insertion.webp?v=2" data-title="CoPRE · complete insertion sequence" data-description="The full recorded sequence preserves the pose adjustments, retries, insertion, and gripper withdrawal." data-duration="2:30" aria-label="CoPRE · complete insertion sequence, 2:30"><span>CoPRE · complete insertion sequence</span><span class="clip-time">2:30</span></a>
@@ -188,7 +170,7 @@
                 <a href="assets/video/experiments/arx-push-2.mp4" data-clip="arx-push-2" data-poster="assets/video/experiments/arx-push-2.webp" data-title="ARX · 2 books" data-description="A continuous ARX pushing trial with a 2-book stack, shown at original speed." data-duration="0:23" aria-label="ARX · 2 books, 0:23"><span>2 books</span></a>
                 <a href="assets/video/experiments/arx-push-4.mp4" data-clip="arx-push-4" data-poster="assets/video/experiments/arx-push-4.webp" data-title="ARX · 4 books" data-description="A continuous ARX pushing trial with a 4-book stack, shown at original speed." data-duration="0:18" aria-label="ARX · 4 books, 0:18"><span>4 books</span></a>
                 <a href="assets/video/experiments/arx-push-6.mp4" data-clip="arx-push-6" data-poster="assets/video/experiments/arx-push-6.webp" data-title="ARX · 6 books" data-description="A continuous ARX pushing trial with a 6-book stack, shown at original speed." data-duration="0:21" aria-label="ARX · 6 books, 0:21"><span>6 books</span></a>
-                <a href="assets/video/experiments/arx-push-8.mp4" data-clip="arx-push-8" data-poster="assets/video/experiments/arx-push-8.webp" data-title="ARX · 8 books" data-description="A continuous ARX pushing trial with a 8-book stack, shown at original speed." data-duration="0:20" aria-label="ARX · 8 books, 0:20"><span>8 books</span></a>
+                <a href="assets/video/experiments/arx-push-8.mp4" data-clip="arx-push-8" data-poster="assets/video/experiments/arx-push-8.webp" data-title="ARX · 8 books" data-description="A continuous ARX pushing trial with an 8-book stack, shown at original speed." data-duration="0:20" aria-label="ARX · 8 books, 0:20"><span>8 books</span></a>
                 <a href="assets/video/experiments/arx-push-10.mp4" data-clip="arx-push-10" data-poster="assets/video/experiments/arx-push-10.webp" data-title="ARX · 10 books" data-description="A continuous ARX pushing trial with a 10-book stack, shown at original speed." data-duration="0:22" aria-label="ARX · 10 books, 0:22"><span>10 books</span></a>
                 </div>
               </div>
@@ -197,7 +179,7 @@
                 <a href="assets/video/experiments/g1-push-2.mp4" data-clip="g1-push-2" data-poster="assets/video/experiments/g1-push-2.webp" data-title="G1 · 2 books" data-description="A continuous G1 pushing trial with a 2-book stack, shown at original speed." data-duration="0:08" aria-label="G1 · 2 books, 0:08"><span>2 books</span></a>
                 <a href="assets/video/experiments/g1-push-4.mp4" data-clip="g1-push-4" data-poster="assets/video/experiments/g1-push-4.webp" data-title="G1 · 4 books" data-description="A continuous G1 pushing trial with a 4-book stack, shown at original speed." data-duration="0:11" aria-label="G1 · 4 books, 0:11"><span>4 books</span></a>
                 <a href="assets/video/experiments/g1-push-6.mp4" data-clip="g1-push-6" data-poster="assets/video/experiments/g1-push-6.webp" data-title="G1 · 6 books" data-description="A continuous G1 pushing trial with a 6-book stack, shown at original speed." data-duration="0:09" aria-label="G1 · 6 books, 0:09"><span>6 books</span></a>
-                <a href="assets/video/experiments/g1-push-8.mp4" data-clip="g1-push-8" data-poster="assets/video/experiments/g1-push-8.webp" data-title="G1 · 8 books" data-description="A continuous G1 pushing trial with a 8-book stack, shown at original speed." data-duration="0:11" aria-label="G1 · 8 books, 0:11"><span>8 books</span></a>
+                <a href="assets/video/experiments/g1-push-8.mp4" data-clip="g1-push-8" data-poster="assets/video/experiments/g1-push-8.webp" data-title="G1 · 8 books" data-description="A continuous G1 pushing trial with an 8-book stack, shown at original speed." data-duration="0:11" aria-label="G1 · 8 books, 0:11"><span>8 books</span></a>
                 <a href="assets/video/experiments/g1-push-10.mp4" data-clip="g1-push-10" data-poster="assets/video/experiments/g1-push-10.webp" data-title="G1 · 10 books" data-description="A continuous G1 pushing trial with a 10-book stack, shown at original speed." data-duration="0:11" aria-label="G1 · 10 books, 0:11"><span>10 books</span></a>
                 </div>
               </div>
@@ -214,38 +196,34 @@
 
     <section class="section container evidence" id="evidence" aria-labelledby="evidence-title">
       <div class="method-heading">
-        <div><p class="eyebrow">05 / Further evaluation</p><h2 id="evidence-title">Testing the design choices.</h2></div>
+        <div><h2 id="evidence-title">Ablation Studies</h2></div>
         <p class="section-intro">Matched ablations examine prediction, residual scoring, and temporal design on the same benchmark recordings.</p>
       </div>
-      <div class="study-grid">
-        <article><h3>State exclusion</h3><p>Withholding observations within the prediction interval improves contact recall on both platforms.</p></article>
-        <article><h3>Noise-weighted scoring</h3><p>Weighting residuals by joint variability preserves sensitivity under broader contact-free calibration.</p></article>
-        <article><h3>Prediction and timing</h3><p>Additional comparisons cover predictor families, prediction horizons, temporal filtering, and detection windows.</p></article>
-      </div>
-      <details class="evaluation-details"><summary>Explore ablations and evaluation data</summary>
-        <p class="detail-note">Recall and held-out broad-motion alarm time are reported together, in percent, to show the sensitivity–false-alarm trade-off.</p>
-        <details class="ablation"><summary>State exclusion<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="State exclusion results"><table><caption>State exclusion · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX alarm time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 alarm time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Off</th><td>3.7</td><td>0.42</td><td>64.4</td><td>0.84</td></tr><tr class="default-row"><th scope="row">On (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div></details>
-        <details class="ablation"><summary>Residual aggregation<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Residual aggregation results"><table><caption>Residual aggregation · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX alarm time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 alarm time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Standardized norm</th><td>0.0</td><td>11.79</td><td>31.9</td><td>1.02</td></tr><tr class=""><th scope="row">Unweighted Jacobian</th><td>45.9</td><td>1.67</td><td>12.6</td><td>0.38</td></tr><tr class="default-row"><th scope="row">Weighted Jacobian (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div></details>
-        <details class="ablation"><summary>Prediction horizon<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Prediction horizon results"><table><caption>Prediction horizon · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX alarm time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 alarm time ↓</th></tr></thead><tbody><tr class=""><th scope="row">H = 1</th><td>4.4</td><td>0.22</td><td>70.4</td><td>0.88</td></tr><tr class=""><th scope="row">H = 2</th><td>46.7</td><td>1.26</td><td>71.1</td><td>0.94</td></tr><tr class="default-row"><th scope="row">H = 3 (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr><tr class=""><th scope="row">H = 4</th><td>74.1</td><td>4.55</td><td>83.7</td><td>1.23</td></tr><tr class=""><th scope="row">H = 5</th><td>80.0</td><td>7.92</td><td>81.5</td><td>0.95</td></tr></tbody></table></div></details>
-        <details class="ablation"><summary>Predictor family<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Predictor family results"><table><caption>Predictor family · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX alarm time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 alarm time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Persistence</th><td>0.0</td><td>0.02</td><td>24.4</td><td>0.59</td></tr><tr class=""><th scope="row">Ridge</th><td>31.1</td><td>0.23</td><td>48.9</td><td>0.91</td></tr><tr class=""><th scope="row">MLP</th><td>77.8</td><td>14.18</td><td>81.5</td><td>0.84</td></tr><tr class=""><th scope="row">GRU</th><td>57.0</td><td>0.72</td><td>92.6</td><td>0.45</td></tr><tr class="default-row"><th scope="row">Transformer (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div><p class="detail-note">The Transformer is shared across the two platforms for the main benchmark. GRU achieves higher recall and lower broad-motion alarm time on G1.</p></details>
-        <details class="ablation"><summary>Prediction and temporal filtering<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Prediction and temporal filtering results"><table><caption>Prediction and temporal filtering · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX alarm time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 alarm time ↓</th></tr></thead><tbody><tr class="default-row"><th scope="row">Direct / instantaneous (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr><tr class=""><th scope="row">Autoregressive</th><td>69.6</td><td>6.30</td><td>65.9</td><td>0.81</td></tr><tr class=""><th scope="row">Fast transient</th><td>40.0</td><td>1.00</td><td>54.8</td><td>0.99</td></tr><tr class=""><th scope="row">Slow sustained</th><td>80.0</td><td>26.19</td><td>50.4</td><td>0.56</td></tr></tbody></table></div></details>
+      <p class="ablation-summary">State exclusion improves recall on both platforms. Noise-weighted Jacobian aggregation improves recall relative to unweighted aggregation, with increased false-alarm time. The comparisons below also examine prediction horizons, predictor families, temporal filtering, and detection windows.</p>
+      <div class="evaluation-details">
+        <p class="detail-note">Recall and the held-out broad-motion false-alarm time fraction are reported together, in percent, to show the sensitivity–false-alarm trade-off. FA time denotes the fraction of contact-free motion spent in confirmed alarm.</p>
+        <details class="ablation"><summary>State exclusion<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="State exclusion results"><table><caption>State exclusion · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX FA time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 FA time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Off</th><td>3.7</td><td>0.42</td><td>64.4</td><td>0.84</td></tr><tr class="default-row"><th scope="row">On (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div></details>
+        <details class="ablation"><summary>Residual aggregation<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Residual aggregation results"><table><caption>Residual aggregation · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX FA time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 FA time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Standardized norm</th><td>0.0</td><td>11.79</td><td>31.9</td><td>1.02</td></tr><tr class=""><th scope="row">Unweighted Jacobian</th><td>45.9</td><td>1.67</td><td>12.6</td><td>0.38</td></tr><tr class="default-row"><th scope="row">Weighted Jacobian (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div></details>
+        <details class="ablation"><summary>Prediction horizon<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Prediction horizon results"><table><caption>Prediction horizon · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX FA time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 FA time ↓</th></tr></thead><tbody><tr class=""><th scope="row">H = 1</th><td>4.4</td><td>0.22</td><td>70.4</td><td>0.88</td></tr><tr class=""><th scope="row">H = 2</th><td>46.7</td><td>1.26</td><td>71.1</td><td>0.94</td></tr><tr class="default-row"><th scope="row">H = 3 (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr><tr class=""><th scope="row">H = 4</th><td>74.1</td><td>4.55</td><td>83.7</td><td>1.23</td></tr><tr class=""><th scope="row">H = 5</th><td>80.0</td><td>7.92</td><td>81.5</td><td>0.95</td></tr></tbody></table></div></details>
+        <details class="ablation"><summary>Predictor family<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Predictor family results"><table><caption>Predictor family · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX FA time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 FA time ↓</th></tr></thead><tbody><tr class=""><th scope="row">Persistence</th><td>0.0</td><td>0.02</td><td>24.4</td><td>0.59</td></tr><tr class=""><th scope="row">Ridge</th><td>31.1</td><td>0.23</td><td>48.9</td><td>0.91</td></tr><tr class=""><th scope="row">MLP</th><td>77.8</td><td>14.18</td><td>81.5</td><td>0.84</td></tr><tr class=""><th scope="row">GRU</th><td>57.0</td><td>0.72</td><td>92.6</td><td>0.45</td></tr><tr class="default-row"><th scope="row">Transformer (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr></tbody></table></div><p class="detail-note">The Transformer architecture is used on both platforms, with separate training for each robot. GRU achieves higher recall and lower broad-motion alarm time on G1.</p></details>
+        <details class="ablation"><summary>Prediction and temporal filtering<span>ARX + G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Prediction and temporal filtering results"><table><caption>Prediction and temporal filtering · combined calibration</caption><thead><tr><th scope="col">Variant</th><th scope="col">ARX recall ↑</th><th scope="col">ARX FA time ↓</th><th scope="col">G1 recall ↑</th><th scope="col">G1 FA time ↓</th></tr></thead><tbody><tr class="default-row"><th scope="row">Direct / instantaneous (default)</th><td>74.1</td><td>3.32</td><td>82.2</td><td>0.86</td></tr><tr class=""><th scope="row">Autoregressive</th><td>69.6</td><td>6.30</td><td>65.9</td><td>0.81</td></tr><tr class=""><th scope="row">Fast transient</th><td>40.0</td><td>1.00</td><td>54.8</td><td>0.99</td></tr><tr class=""><th scope="row">Slow sustained</th><td>80.0</td><td>26.19</td><td>50.4</td><td>0.56</td></tr></tbody></table></div></details>
         <details class="ablation"><summary>State exclusion across horizons<span>G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="State exclusion across horizons"><table><caption>G1 · state exclusion off / on · combined calibration</caption><thead><tr><th scope="col">H</th><th scope="col">Off: recall ↑</th><th scope="col">Off: alarm time ↓</th><th scope="col">On: recall ↑</th><th scope="col">On: alarm time ↓</th></tr></thead><tbody><tr><th scope="row">2</th><td>68.9</td><td>0.85</td><td>71.1</td><td>0.94</td></tr><tr><th scope="row">3</th><td>64.4</td><td>0.84</td><td>82.2</td><td>0.86</td></tr><tr><th scope="row">4</th><td>63.0</td><td>0.81</td><td>83.7</td><td>1.23</td></tr></tbody></table></div></details>
         <details class="ablation"><summary>Detection evaluation window<span>G1</span></summary><div class="table-wrap" tabindex="0" role="region" aria-label="Detection evaluation window"><table><caption>G1 · state exclusion off / on · combined calibration</caption><thead><tr><th scope="col">Window (s)</th><th scope="col">Off: recall ↑</th><th scope="col">On: recall ↑</th></tr></thead><tbody><tr><th scope="row">0.1</th><td>13.3</td><td>20.7</td></tr><tr><th scope="row">0.25</th><td>38.5</td><td>57.0</td></tr><tr><th scope="row">0.5</th><td>64.4</td><td>82.2</td></tr></tbody></table></div><p class="detail-note">Predictors and thresholds are fixed across these evaluation windows. The main G1 benchmark uses 0.50 s.</p></details>
         <p class="detail-note">The detection archive contains 45 contact and 42 contact-free ARX recordings, and 45 contact and 51 contact-free G1 recordings. Seeds, cross-fitting, and ablations reuse these recordings. Downloads contain summary tables and a contact-trial index.</p>
         <p class="data-links"><a href="assets/data/main-results.csv" download>Main results CSV ↓</a><a href="assets/data/ablations.csv" download>Ablation tables CSV ↓</a><a href="assets/data/g1-temporal-checks.csv" download>G1 temporal checks CSV ↓</a><a href="assets/data/contact-trials.csv" download>90-trial index CSV ↓</a><a href="assets/data/README.txt">Data notes ↗</a></p>
-      </details>
+      </div>
     </section>
 
     <section class="method-section" id="resources" aria-labelledby="resources-title">
       <div class="section container resources">
         <div class="section-heading">
-          <p class="eyebrow">06 / Resources</p>
-          <h2 id="resources-title">Explore the project.</h2>
+
+          <h2 id="resources-title">Resources</h2>
           <p>Video and evaluation summaries are available below.</p>
         </div>
         <dl class="resource-list">
-          <div><dt>Paper</dt><dd><span class="status">Coming soon</span></dd></div>
-          <div><dt>Research code</dt><dd><span class="status">Coming soon</span></dd></div>
+          <div><dt>Paper</dt><dd><span class="status">Not yet released</span></dd></div>
+          <div><dt>Research code</dt><dd><span class="status">Not yet released</span></dd></div>
           <div><dt>Video</dt><dd><a href="#video">Watch · 3 min ↗</a></dd></div>
           <div><dt>Experiment videos</dt><dd><a href="#experiment-videos">Browse 15 clips ↗</a></dd></div>
           <div><dt>Evaluation data</dt><dd><a href="#evidence">Ablations &amp; downloads ↗</a></dd></div>
