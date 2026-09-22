@@ -14,9 +14,9 @@ Open http://127.0.0.1:8000. The published host should support HTTP Range request
 
 - `index.html`, `styles.css`: responsive project page, main comparisons, then manipulation demonstrations. Protocol details and per-condition tables are folded; seven ablation/temporal comparisons and data downloads sit inside a single optional evaluation disclosure.
 - `site.js`: six video chapter buttons; native playback still works without JavaScript.
-- `assets/video/copre-v36.mp4`: the supplied v36, 180 seconds, 1920 × 1080, H.264/AAC, 21.8 MB. Streams are copied without re-encoding; MP4 `moov` is before `mdat` for progressive playback. Metadata is stripped. `preload="none"` avoids preloading the film; no autoplay.
-- `assets/video/poster.webp`: lightweight poster extracted at 15 seconds.
-- `assets/video/copre-en.vtt`: English captions converted from the matching v36 SRT. The video also contains baked-in subtitles; the optional caption track is not enabled by default.
+- `assets/video/copre-v40.mp4`: the supplied v40, 180 seconds, 1920 × 1080, H.264/AAC, 22.1 MB. The file is copied unchanged; MP4 `moov` is before `mdat` for progressive playback. `preload="none"` avoids preloading the film; no autoplay.
+- `assets/video/poster-v40.webp`: lightweight poster extracted at 12.1 seconds.
+- `assets/video/copre-v40-en.vtt`: English captions converted from the matching v40 SRT. The video also contains baked-in subtitles; the optional caption track is not enabled by default.
 - `assets/data/`: anonymous presentation CSVs, a 90-contact-trial index, and definitions. These are curated summaries, not a raw-data release.
 - `assets/*.webp`: project figures, including the G1 condition strip exported from the manuscript PDF.
 
