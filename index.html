@@ -14,7 +14,10 @@
   <header class="site-header">
     <nav class="container nav" aria-label="Main navigation">
       <a class="wordmark" href="#home" aria-label="CoPRE home">CoPRE<span aria-hidden="true">.</span></a>
-      <div class="nav-links">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation menu" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="menu-bars" d="M4 6h16M4 12h16M4 18h16"/><path class="menu-close" d="m6 6 12 12M6 18 18 6"/></svg>
+      </button>
+      <div class="nav-links" id="nav-links">
         <a href="#video">Video</a>
         <a href="#overview">Overview</a>
         <a href="#method">Method</a>
@@ -30,8 +33,10 @@
     <section class="hero container" id="home" aria-labelledby="project-title">
       <h1 id="project-title"><span class="project-name">CoPRE:</span> Improving Sensitivity in Proprioceptive Contact Detection<br class="desktop-break"> for Low-Cost Robot Arms</h1>
       <div class="hero-actions">
-        <a class="button secondary" href="#video">Project Video · 3 min <span aria-hidden="true">▶</span></a>
-        <a class="button secondary" href="#results">Experimental Results <span aria-hidden="true">↓</span></a>
+        <a class="button" href="assets/copre-anonymous.pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg>Paper</a>
+        <a class="button" href="https://github.com/copre-arm/copre"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/></svg>Code</a>
+        <a class="button" href="#video"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg>Video</a>
+        <a class="button" href="#results"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16M9 15v-4m5 4V7m5 8v-5"/></svg>Results</a>
       </div>
       <div class="video-shell" id="video">
         <video id="project-video" controls playsinline preload="none" poster="assets/video/poster-v40.webp" width="1920" height="1080" aria-label="CoPRE: three-minute research video">
@@ -219,11 +224,11 @@
         <div class="section-heading">
 
           <h2 id="resources-title">Resources</h2>
-          <p>Video and evaluation summaries are available below.</p>
+          <p>The paper, open-source code, videos, and evaluation summaries are available below.</p>
         </div>
         <dl class="resource-list">
-          <div><dt>Paper</dt><dd><span class="status">Not yet released</span></dd></div>
-          <div><dt>Research code</dt><dd><span class="status">Not yet released</span></dd></div>
+          <div><dt>Paper</dt><dd><a href="assets/copre-anonymous.pdf">PDF ↗</a></dd></div>
+          <div><dt>Research code</dt><dd><a href="https://github.com/copre-arm/copre">GitHub · Open source ↗</a></dd></div>
           <div><dt>Video</dt><dd><a href="#video">Watch · 3 min ↗</a></dd></div>
           <div><dt>Experiment videos</dt><dd><a href="#experiment-videos">Browse 15 clips ↗</a></dd></div>
           <div><dt>Evaluation data</dt><dd><a href="#evidence">Ablations &amp; downloads ↗</a></dd></div>

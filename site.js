@@ -1,4 +1,36 @@
 'use strict';
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelector('#nav-links');
+const mobileNav = matchMedia('(max-width: 760px)');
+function setNavOpen(open) {
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+  navLinks.classList.toggle('is-open', open);
+}
+navToggle.hidden = false;
+document.documentElement.classList.add('nav-enhanced');
+navToggle.addEventListener('click', () => {
+  setNavOpen(navToggle.getAttribute('aria-expanded') !== 'true');
+});
+navLinks.addEventListener('click', event => {
+  if (event.target.closest('a')) setNavOpen(false);
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && navToggle.getAttribute('aria-expanded') === 'true') {
+    setNavOpen(false);
+    navToggle.focus();
+  }
+});
+document.addEventListener('click', event => {
+  if (!event.target.closest('.nav')) setNavOpen(false);
+});
+mobileNav.addEventListener('change', () => {
+  const focusWasInMenu = navLinks.contains(document.activeElement);
+  setNavOpen(false);
+  if (mobileNav.matches && focusWasInMenu) navToggle.focus();
+  if (!mobileNav.matches && document.activeElement === navToggle) navLinks.querySelector('a').focus();
+});
+
 const video = document.querySelector('#project-video');
 const status = document.querySelector('#video-status');
 let pendingTime = null;

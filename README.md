@@ -14,6 +14,7 @@ Open http://127.0.0.1:8000. The published host should support HTTP Range request
 
 - `index.html`, `styles.css`: responsive project page, main comparisons, then manipulation demonstrations. Protocol details and per-condition tables are folded; seven ablation/temporal comparisons and data downloads sit inside a single optional evaluation disclosure.
 - `site.js`: six video chapter buttons; native playback still works without JavaScript.
+- `assets/copre-anonymous.pdf`: anonymous version of the paper, linked from the hero and Resources section.
 - `assets/video/copre-v40.mp4`: the supplied v40, 180 seconds, 1920 × 1080, H.264/AAC, 22.1 MB. The file is copied unchanged; MP4 `moov` is before `mdat` for progressive playback. `preload="none"` avoids preloading the film; no autoplay.
 - `assets/video/poster-v40.webp`: lightweight poster extracted at 12.1 seconds.
 - `assets/video/copre-v40-en.vtt`: English captions converted from the matching v40 SRT. The video also contains baked-in subtitles; the optional caption track is not enabled by default.
